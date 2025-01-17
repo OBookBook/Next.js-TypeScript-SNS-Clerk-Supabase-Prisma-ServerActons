@@ -69,5 +69,24 @@ export async function POST(req: Request) {
     }
   }
 
+  if (eventType === "user.updated") {
+    try {
+      await prisma.user.update({
+        where: {
+          id: evt.data.id,
+        },
+        data: {
+          clerkId: evt.data.id,
+          username: JSON.parse(body).data.username,
+          image: JSON.parse(body).data.image_url,
+        },
+      });
+      return new Response("User has been update!", { status: 200 });
+    } catch (err) {
+      console.log(err);
+      return new Response("Filed to update the user!", { status: 500 });
+    }
+  }
+
   return new Response("Webhook received", { status: 200 });
 }
