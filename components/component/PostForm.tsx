@@ -4,25 +4,48 @@ import { Button } from "@/components/ui/button";
 import { SendIcon } from "./Icons";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
+import { z } from "zod";
 
 export default async function PostForm() {
-  const { userId } = await auth();
-
   async function addPostAction(formData: FormData) {
     "use server";
 
-    const postText = formData.get("post") as string;
-    if (!userId) return;
-
     try {
+      const { userId } = await auth();
+      if (!userId) return;
+
+      const postText = formData.get("post") as string;
+      const postTextSchema = z
+        .string()
+        .min(1, "ポスト内容を入力してください。")
+        .max(140, "140文字以内で入力してください");
+      const validatedPostText = postTextSchema.parse(postText);
+
       await prisma.post.create({
         data: {
-          content: postText,
+          content: validatedPostText,
           authorId: userId,
         },
       });
-    } catch (err) {
-      console.log(err);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return {
+          error: error.errors.map((e) => e.message).join(", "),
+          success: false,
+        };
+      } else if (error instanceof Error) {
+        return {
+          error: error.message,
+          success: false,
+        };
+      } else {
+        return {
+          error: "An unexpected error has occurred.",
+          success: false,
+        };
+      }
+
+      console.log(error);
     }
   }
 
