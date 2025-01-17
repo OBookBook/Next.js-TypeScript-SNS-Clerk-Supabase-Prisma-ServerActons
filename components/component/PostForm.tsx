@@ -4,11 +4,12 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { SendIcon } from "./Icons";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { addPostAction } from "@/lib/action";
 
 export default function PostForm() {
   const [error, setError] = useState<string | undefined>("");
+  const formRef = useRef<HTMLFormElement>(null);
 
   const handleSubmit = async (formDaata: FormData) => {
     const result = await addPostAction(formDaata);
@@ -16,6 +17,7 @@ export default function PostForm() {
       setError(result?.error);
     } else {
       setError("");
+      if (formRef.current) formRef.current.reset();
     }
   };
 
@@ -26,7 +28,11 @@ export default function PostForm() {
           <AvatarImage src="/placeholder-user.jpg" />
           <AvatarFallback>AC</AvatarFallback>
         </Avatar>
-        <form action={handleSubmit} className="flex items-center flex-1">
+        <form
+          action={handleSubmit}
+          className="flex items-center flex-1"
+          ref={formRef}
+        >
           <Input
             type="text"
             placeholder="What's on your mind?"

@@ -22,6 +22,11 @@ export async function addPostAction(formData: FormData) {
         authorId: userId,
       },
     });
+
+    return {
+      error: undefined,
+      success: true,
+    };
   } catch (error) {
     if (error instanceof z.ZodError) {
       return {
