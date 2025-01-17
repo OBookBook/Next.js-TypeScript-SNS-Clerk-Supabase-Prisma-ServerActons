@@ -16,6 +16,8 @@ export async function addPostAction(formData: FormData) {
       .max(140, "140文字以内で入力してください");
     const validatedPostText = postTextSchema.parse(postText);
 
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+
     await prisma.post.create({
       data: {
         content: validatedPostText,
