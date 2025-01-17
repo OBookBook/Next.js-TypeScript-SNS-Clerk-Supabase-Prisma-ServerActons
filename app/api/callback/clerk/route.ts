@@ -1,7 +1,9 @@
+// @Doc: https://clerk.com/docs/webhooks/sync-data
 // http://localhost:3000/api/callback/clerk
 import { Webhook } from "svix";
 import { headers } from "next/headers";
 import { WebhookEvent } from "@clerk/nextjs/server";
+import { Prisma } from "@prisma/client";
 
 export async function POST(req: Request) {
   const SIGNING_SECRET = process.env.SIGNING_SECRET;
@@ -52,8 +54,15 @@ export async function POST(req: Request) {
   // For this guide, log payload to console
   const { id } = evt.data;
   const eventType = evt.type;
-  console.log(`Received webhook with ID ${id} and event type of ${eventType}`);
-  console.log("Webhook payload:", body);
+
+  if (eventType === "user.created") {
+    try {
+      await Prisma.user;
+    } catch (err) {
+      console.log(err);
+      return new Response("faild create user", { status: 500 });
+    }
+  }
 
   return new Response("Webhook received", { status: 200 });
 }
