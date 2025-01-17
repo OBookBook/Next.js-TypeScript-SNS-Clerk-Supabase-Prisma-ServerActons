@@ -11,6 +11,7 @@ export default async function PostList() {
   if (!userId) return;
 
   let posts = [];
+  // ServerComponent内で、prismaを呼んだ場合: SSR
   posts = await prisma.post.findMany({
     where: {
       authorId: {
@@ -67,10 +68,10 @@ export default async function PostList() {
             </div>
             <div className="flex items-center gap-2 text-muted-foreground">
               <ClockIcon className="h-5 w-5" />
-              <span>{post.timestamp}</span>
+              {/* <span>{post.timestamp}</span> */}
             </div>
           </div>
-          {post.comments && (
+          {/* {post.comments && (
             <div className="mt-4 border-t pt-4 space-y-2">
               {post.comments.map((comment, index) => (
                 <div key={index} className="flex items-center gap-4">
@@ -88,7 +89,7 @@ export default async function PostList() {
                 </div>
               ))}
             </div>
-          )}
+          )} */}
         </div>
       ))}
     </div>
