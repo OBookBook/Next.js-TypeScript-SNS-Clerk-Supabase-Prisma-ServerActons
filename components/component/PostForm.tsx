@@ -1,9 +1,9 @@
 "use client";
 
 import SubmitButton from "./SubmitButton";
-import { useActionState, useRef } from "react";
 import { addPostAction } from "@/lib/action";
 import { Input } from "@/components/ui/input";
+import { useActionState, useRef } from "react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 export default function PostForm() {
