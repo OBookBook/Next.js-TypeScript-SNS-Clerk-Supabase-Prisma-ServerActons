@@ -1,29 +1,14 @@
-// components/PostList.tsx
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { auth } from "@clerk/nextjs/server";
 import { Button } from "@/components/ui/button";
 import { HeartIcon, MessageCircleIcon, Share2Icon, ClockIcon } from "./Icons";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { fethPosts } from "@/lib/postDaaFetcher";
 
-export default function PostList() {
-  const posts = [
-    {
-      id: 1,
-      author: { name: "Jane Doe", username: "@janedoe" },
-      content:
-        "Excited to share my latest project with you all! Check it out and let me know what you think.",
-      timestamp: "2h",
-      comments: [
-        { author: "John Doe", content: "Great work!" },
-        { author: "Jane Doe", content: "Looks amazing!" },
-      ],
-    },
-    {
-      id: 2,
-      author: { name: "John Smith", username: "@johnsmith" },
-      content:
-        "Enjoying the beautiful weather today! Whos up for a hike later?",
-      timestamp: "1h",
-    },
-  ];
+export default async function PostList() {
+  const auth_session = await auth();
+  const userId = auth_session?.userId;
+  if (!userId) return;
+  const posts = await fethPosts(userId);
 
   return (
     <div className="space-y-4">
@@ -59,10 +44,10 @@ export default function PostList() {
             </div>
             <div className="flex items-center gap-2 text-muted-foreground">
               <ClockIcon className="h-5 w-5" />
-              <span>{post.timestamp}</span>
+              <span>{post.createdAt.toLocaleString()}</span>
             </div>
           </div>
-          {post.comments && (
+          {/* {post.comments && (
             <div className="mt-4 border-t pt-4 space-y-2">
               {post.comments.map((comment, index) => (
                 <div key={index} className="flex items-center gap-4">
@@ -80,7 +65,7 @@ export default function PostList() {
                 </div>
               ))}
             </div>
-          )}
+          )} */}
         </div>
       ))}
     </div>
