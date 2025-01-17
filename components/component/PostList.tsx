@@ -1,9 +1,8 @@
-// components/PostList.tsx
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { HeartIcon, MessageCircleIcon, Share2Icon, ClockIcon } from "./Icons";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
+import { Button } from "@/components/ui/button";
+import { HeartIcon, MessageCircleIcon, Share2Icon, ClockIcon } from "./Icons";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 export default async function PostList() {
   const auth_session = await auth();
