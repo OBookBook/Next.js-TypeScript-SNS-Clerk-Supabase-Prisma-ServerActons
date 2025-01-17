@@ -44,8 +44,6 @@ export default async function PostForm() {
           success: false,
         };
       }
-
-      console.log(error);
     }
   }
 
