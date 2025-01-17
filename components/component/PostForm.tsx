@@ -1,14 +1,29 @@
-// components/PostForm.tsx
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { SendIcon } from "./Icons";
+import { prisma } from "@/lib/prisma";
+import { auth } from "@clerk/nextjs/server";
 
-export default function PostForm() {
+export default async function PostForm() {
+  const { userId } = await auth();
+
   async function addPostAction(formData: FormData) {
     "use server";
-    const postText = formData.get("post");
-    console.log(postText);
+
+    const postText = formData.get("post") as string;
+    if (!userId) return;
+
+    try {
+      await prisma.post.create({
+        data: {
+          content: postText,
+          authorId: userId,
+        },
+      });
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   return (
