@@ -4,10 +4,18 @@ import { z } from "zod";
 import { prisma } from "./prisma";
 import { auth } from "@clerk/nextjs/server";
 
-export async function addPostAction(formData: FormData) {
+type State = {
+  error?: string | undefined;
+  success: boolean;
+};
+
+export async function addPostAction(
+  prevState: State,
+  formData: FormData
+): Promise<State> {
   try {
     const { userId } = await auth();
-    if (!userId) return;
+    if (!userId) return { error: "user no exsist", success: false };
 
     const postText = formData.get("post") as string;
     const postTextSchema = z
@@ -16,7 +24,7 @@ export async function addPostAction(formData: FormData) {
       .max(140, "140文字以内で入力してください");
     const validatedPostText = postTextSchema.parse(postText);
 
-    await new Promise((resolve) => setTimeout(resolve, 3000));
+    // await new Promise((resolve) => setTimeout(resolve, 3000));
 
     await prisma.post.create({
       data: {

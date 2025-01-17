@@ -1,24 +1,18 @@
 "use client";
 
-import { useRef, useState } from "react";
 import SubmitButton from "./SubmitButton";
+import { useActionState, useRef } from "react";
 import { addPostAction } from "@/lib/action";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 export default function PostForm() {
-  const [error, setError] = useState<string | undefined>("");
-  const formRef = useRef<HTMLFormElement>(null);
-
-  const handleSubmit = async (formDaata: FormData) => {
-    const result = await addPostAction(formDaata);
-    if (!result?.success) {
-      setError(result?.error);
-    } else {
-      setError("");
-      if (formRef.current) formRef.current.reset();
-    }
+  const initialState = {
+    error: undefined,
+    success: false,
   };
+  const formRef = useRef<HTMLFormElement>(null);
+  const [state, formAction] = useActionState(addPostAction, initialState);
 
   return (
     <div>
@@ -28,7 +22,7 @@ export default function PostForm() {
           <AvatarFallback>AC</AvatarFallback>
         </Avatar>
         <form
-          action={handleSubmit}
+          action={formAction}
           className="flex items-center flex-1"
           ref={formRef}
         >
@@ -41,7 +35,7 @@ export default function PostForm() {
           <SubmitButton />
         </form>
       </div>
-      {error && <p className="text-destructive mt-1">{error}</p>}
+      {state.error && <p className="text-destructive mt-1">{state.error}</p>}
     </div>
   );
 }
