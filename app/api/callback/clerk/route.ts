@@ -1,13 +1,12 @@
 // @Doc: https://clerk.com/docs/webhooks/sync-data
 // http://localhost:3000/api/callback/clerk
 import { Webhook } from "svix";
+import { prisma } from "@/lib/prisma";
 import { headers } from "next/headers";
 import { WebhookEvent } from "@clerk/nextjs/server";
-import { Prisma } from "@prisma/client";
 
 export async function POST(req: Request) {
   const SIGNING_SECRET = process.env.SIGNING_SECRET;
-
   if (!SIGNING_SECRET) {
     throw new Error(
       "Error: Please add SIGNING_SECRET from Clerk Dashboard to .env or .env.local"
@@ -50,17 +49,23 @@ export async function POST(req: Request) {
     });
   }
 
-  // Do something with payload
-  // For this guide, log payload to console
   const { id } = evt.data;
   const eventType = evt.type;
 
   if (eventType === "user.created") {
     try {
-      await Prisma.user;
+      await prisma.user.create({
+        data: {
+          id: evt.data.id,
+          clerkId: evt.data.id,
+          username: JSON.parse(body).data.username,
+          image: JSON.parse(body).data.image_url,
+        },
+      });
+      return new Response("User has been created!", { status: 200 });
     } catch (err) {
       console.log(err);
-      return new Response("faild create user", { status: 500 });
+      return new Response("Filed to create the user!", { status: 500 });
     }
   }
 
