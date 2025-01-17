@@ -1,11 +1,11 @@
 "use client";
 
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { SendIcon } from "./Icons";
 import { useRef, useState } from "react";
 import { addPostAction } from "@/lib/action";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 export default function PostForm() {
   const [error, setError] = useState<string | undefined>("");
