@@ -3,6 +3,7 @@
 import { z } from "zod";
 import { prisma } from "./prisma";
 import { auth } from "@clerk/nextjs/server";
+import { revalidatePath } from "next/cache";
 
 type State = {
   error?: string | undefined;
@@ -32,6 +33,8 @@ export async function addPostAction(
         authorId: userId,
       },
     });
+
+    revalidatePath("/"); // キャッシュクリア
 
     return {
       error: undefined,
